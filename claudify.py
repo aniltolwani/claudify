@@ -1,4 +1,5 @@
 import os
+import argparse
 
 def get_file_content(file_path):
     """
@@ -46,12 +47,25 @@ def retrieve_directory_info(path):
 
     return formatted_string
 
-# Provide the path to your local directory
-directory_path = "/path/to/your/directory"
-output_file_name = "formatted_directory_info.txt"
+def main():
+    parser = argparse.ArgumentParser(description='Retrieve directory information and save it to a file.')
+    parser.add_argument('directory', metavar='DIR', type=str, help='Path to the directory')
+    parser.add_argument('-o', '--output', metavar='FILE', type=str, default='formatted_directory_info.txt', help='Output file name (default: formatted_directory_info.txt)')
 
-formatted_directory_info = retrieve_directory_info(directory_path)
-with open(output_file_name, 'w', encoding='utf-8') as file:
-    file.write(formatted_directory_info)
+    args = parser.parse_args()
 
-print(f"Directory information has been saved to {output_file_name}")
+    directory_path = args.directory
+    output_file_name = args.output
+
+    if not os.path.isdir(directory_path):
+        print(f"Error: {directory_path} is not a valid directory.")
+        return
+
+    formatted_directory_info = retrieve_directory_info(directory_path)
+    with open(output_file_name, 'w', encoding='utf-8') as file:
+        file.write(formatted_directory_info)
+
+    print(f"Directory information has been saved to {output_file_name}")
+
+if __name__ == '__main__':
+    main()
