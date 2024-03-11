@@ -1,12 +1,19 @@
 import os
-import argparse
+import click
 
 def get_file_content(file_path):
     """
     Retrieves the content of files
     """
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except UnicodeDecodeError:
+        try:
+            with open(file_path, 'r', encoding='latin-1') as file:
+                return file.read()
+        except UnicodeDecodeError:
+            return f"Error decoding file: {file_path}"
 
 def build_directory_tree(path, indent=0, file_paths=[]):
     """
@@ -47,25 +54,18 @@ def retrieve_directory_info(path):
 
     return formatted_string
 
-def main():
-    parser = argparse.ArgumentParser(description='Retrieve directory information and save it to a file.')
-    parser.add_argument('directory', metavar='DIR', type=str, help='Path to the directory')
-    parser.add_argument('-o', '--output', metavar='FILE', type=str, default='formatted_directory_info.txt', help='Output file name (default: formatted_directory_info.txt)')
-
-    args = parser.parse_args()
-
-    directory_path = args.directory
-    output_file_name = args.output
-
-    if not os.path.isdir(directory_path):
-        print(f"Error: {directory_path} is not a valid directory.")
-        return
-
-    formatted_directory_info = retrieve_directory_info(directory_path)
-    with open(output_file_name, 'w', encoding='utf-8') as file:
+@click.command()
+@click.argument('directory', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option('-o', '--output', type=click.Path(dir_okay=False), default='formatted_directory_info.txt', help='Output file name (default: formatted_directory_info.txt)')
+def main(directory, output):
+    """
+    Retrieve directory information and save it to a file.
+    """
+    formatted_directory_info = retrieve_directory_info(directory)
+    with open(output, 'w', encoding='utf-8') as file:
         file.write(formatted_directory_info)
 
-    print(f"Directory information has been saved to {output_file_name}")
+    click.echo(f"Directory information has been saved to {output}")
 
 if __name__ == '__main__':
     main()
