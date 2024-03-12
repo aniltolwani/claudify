@@ -28,7 +28,7 @@ def build_directory_tree(path, indent=0, file_paths=[]):
         else:
             tree_str += '    ' * indent + f"{item}\n"
             # Indicate which file extensions should be included in the prompt!
-            if item.endswith(('.py', '.ipynb', '.html', '.css', '.js', '.jsx', '.rst', '.md')):
+            if item.endswith(('.py', '.md')):
                 file_paths.append((indent, item_path))
     return tree_str, file_paths
 
