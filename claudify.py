@@ -20,7 +20,7 @@ def build_directory_tree(path, indent=0, file_paths=[], excluded_files=[], exclu
     Builds a string representation of the directory tree and collects file paths.
     """
     tree_str = ""
-    allowed_extensions = ('.tsx', '.ts', '.css', '.html', '.py', '.md','.js','.txt','.json')
+    allowed_extensions = ('.tsx', '.ts', '.css', '.html', '.py', '.md','.js')
     for item in os.listdir(path):
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
